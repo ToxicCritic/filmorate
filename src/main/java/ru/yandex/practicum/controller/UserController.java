@@ -1,23 +1,24 @@
 package ru.yandex.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
-@Validated
 public class UserController {
-
-    private final List<User> users = new ArrayList<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -25,31 +26,31 @@ public class UserController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        user.setId(users.size() + 1);
-        users.add(user);
+        long newId = users.size() + 1;
+        user.setId(newId);
+        users.put(newId, user);
         log.info("Пользователь создан: {}", user);
         return user;
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (user.getId() <= 0 || user.getId() > users.size()) {
+        if (!users.containsKey(user.getId())) {
             throw new ValidationException("Пользователь с таким ID не найден.");
         }
-        users.set(user.getId() - 1, user);
+        users.put(user.getId(), user);
         log.info("Пользователь обновлен: {}", user);
         return user;
     }
 
     @GetMapping
     public List<User> getAllUsers() {
-        return users;
+        return new ArrayList<>(users.values());
     }
 
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleValidationException(ValidationException e) {
+    public ResponseEntity<String> handleValidationException(ValidationException e) {
         log.error("Ошибка валидации: {}", e.getMessage());
-        return e.getMessage();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 }
