@@ -51,7 +51,7 @@ public class FilmControllerUnitTest {
     @Test
     public void shouldThrowExceptionForUpdatingNonExistentFilm() {
         Film film = new Film();
-        film.setId(999);
+        film.setId(999L);
         film.setName("Non-existent Film");
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {

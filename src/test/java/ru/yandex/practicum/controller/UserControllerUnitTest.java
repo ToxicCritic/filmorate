@@ -47,7 +47,7 @@ public class UserControllerUnitTest {
     @Test
     public void shouldThrowExceptionForUpdatingNonExistentUser() {
         User user = new User();
-        user.setId(999);
+        user.setId(999L);
         user.setLogin("nonexistent");
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {
