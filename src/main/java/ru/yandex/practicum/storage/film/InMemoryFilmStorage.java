@@ -58,7 +58,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilmById(Long id) {
         Film film = films.get(id);
         if (film == null) {
-            throw new ValidationException("Пользователь с таким ID не найден.");
+            throw new ValidationException("Фильм с таким ID не найден.");
         }
         return film;
     }

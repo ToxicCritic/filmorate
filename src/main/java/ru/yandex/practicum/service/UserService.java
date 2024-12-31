@@ -25,8 +25,16 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
+    public User deleteUser(User user) {
+        return userStorage.deleteUser(user);
+    }
+
     public Collection<User> getAllUsers() {
         return userStorage.getAllUsers();
+    }
+
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id);
     }
 
     public void addFriend(Long userId, Long friendId) {

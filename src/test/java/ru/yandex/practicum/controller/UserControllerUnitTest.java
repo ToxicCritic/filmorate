@@ -2,8 +2,11 @@ package ru.yandex.practicum.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
+import ru.yandex.practicum.service.UserService;
+import ru.yandex.practicum.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -15,17 +18,18 @@ public class UserControllerUnitTest {
 
     @BeforeEach
     public void setup() {
-        userController = new UserController();
+        UserService userService = new UserService(new InMemoryUserStorage());
+        userController = new UserController(userService);
     }
 
     @Test
-    public void shouldCreateUserSuccessfully() {
+    public void shouldAddUserSuccessfully() {
         User user = new User();
         user.setLogin("testuser");
         user.setEmail("test@mail.com");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
-        User createdUser = userController.createUser(user);
+        User createdUser = userController.addUser(user);
 
         assertNotNull(createdUser);
         assertEquals(1, createdUser.getId());
@@ -33,27 +37,67 @@ public class UserControllerUnitTest {
     }
 
     @Test
-    public void shouldSetLoginAsNameIfNameIsEmpty() {
+    public void shouldUpdateUserSuccessfully() {
         User user = new User();
-        user.setLogin("autoname");
-        user.setEmail("auto@mail.com");
-        user.setBirthday(LocalDate.of(1995, 5, 15));
+        user.setLogin("testuser");
+        user.setEmail("test@mail.com");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
 
-        User createdUser = userController.createUser(user);
+        User createdUser = userController.addUser(user);
 
-        assertEquals("autoname", createdUser.getName());
+        createdUser.setLogin("updatedUser");
+        User updatedUser = userController.updateUser(createdUser);
+
+        assertNotNull(updatedUser);
+        assertEquals(createdUser.getId(), updatedUser.getId());
+        assertEquals("updatedUser", updatedUser.getLogin());
     }
 
     @Test
-    public void shouldThrowExceptionForUpdatingNonExistentUser() {
+    public void shouldDeleteUserSuccessfully() {
         User user = new User();
-        user.setId(999L);
-        user.setLogin("nonexistent");
+        user.setLogin("testuser");
+        user.setEmail("test@mail.com");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
+
+        User createdUser = userController.addUser(user);
+
+        assertDoesNotThrow(() -> userController.deleteUser(createdUser));
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {
-            userController.updateUser(user);
+            userController.getUserById(createdUser.getId());
         });
 
         assertEquals("Пользователь с таким ID не найден.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldGetUserByIdSuccessfully() {
+        User user = new User();
+        user.setLogin("testuser");
+        user.setEmail("test@mail.com");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
+
+        User createdUser = userController.addUser(user);
+
+        User retrievedUser = userController.getUserById(createdUser.getId());
+
+        assertNotNull(retrievedUser);
+        assertEquals(createdUser.getId(), retrievedUser.getId());
+        assertEquals("testuser", retrievedUser.getLogin());
+    }
+
+    @Test
+    public void shouldThrowExceptionForInvalidEmail() {
+        User user = new User();
+        user.setLogin("invaliduser");
+        user.setEmail("invalid-email");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
+
+        MethodArgumentNotValidException exception = assertThrows(MethodArgumentNotValidException.class, () -> {
+            userController.addUser(user);
+        });
+
+        assertEquals("Некорректный email.", exception.getMessage());
     }
 }

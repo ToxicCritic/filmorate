@@ -11,7 +11,7 @@ import java.util.Set;
 public class User {
     private Long id;
 
-    @Email(message = "Неверный формат электронной почты")
+    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", message = "Неверный формат электронной почты")
     @NotBlank(message = "Электронная почта не может быть пустой")
     private String email;
 
