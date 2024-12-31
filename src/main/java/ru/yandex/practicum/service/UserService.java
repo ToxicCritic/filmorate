@@ -43,13 +43,13 @@ public class UserService {
         }
     }
 
-    public List<User> getFriends(Long userId) {
+    public Collection<User> getFriends(Long userId) {
         return friendships.getOrDefault(userId, Collections.emptySet()).stream()
                 .map(userStorage::getUserById)
                 .collect(Collectors.toList());
     }
 
-    public List<User> getCommonFriends(Long userId, Long otherId) {
+    public Collection<User> getCommonFriends(Long userId, Long otherId) {
         Set<Long> userFriends = friendships.getOrDefault(userId, Collections.emptySet());
         Set<Long> otherFriends = friendships.getOrDefault(otherId, Collections.emptySet());
 

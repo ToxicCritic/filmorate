@@ -40,7 +40,7 @@ public class FilmService {
         }
     }
 
-    public List<Film> getPopularFilms(int count) {
+    public Collection<Film> getPopularFilms(int count) {
         return filmStorage.getAllFilms().stream()
                 .sorted((f1, f2) -> Integer.compare(
                         likes.getOrDefault(f2.getId(), Collections.emptySet()).size(),
