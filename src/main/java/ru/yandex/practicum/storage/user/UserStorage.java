@@ -9,4 +9,5 @@ public interface UserStorage {
     public User updateUser(User user);
     public User deleteUser(User user);
     public Collection<User> getAllUsers();
+    public User getUserById(Long id);
 }

@@ -2,48 +2,63 @@ package ru.yandex.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import ru.yandex.practicum.exception.ValidationException;
-import ru.yandex.practicum.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.model.User;
+import ru.yandex.practicum.service.UserService;
 
-import jakarta.validation.Valid;
-import ru.yandex.practicum.storage.user.UserStorage;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
-    public final UserStorage userStorage;
+    private final UserService userService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@Valid @RequestBody User user) {
-        return userStorage.addUser(user);
+    public User createUser(@RequestBody User user) {
+        log.info("Создание пользователя: {}", user);
+        return userService.addUser(user);
     }
 
     @PutMapping
-    public User updateUser(@Valid @RequestBody User user) {
-        return userStorage.updateUser(user);
+    public User updateUser(@RequestBody User user) {
+        log.info("Обновление пользователя: {}", user);
+        return userService.updateUser(user);
     }
 
     @GetMapping
     public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        log.info("Получение всех пользователей");
+        return userService.getAllUsers();
     }
 
-    @DeleteMapping
-    public User deleteUser(User user) {
-        return userStorage.deleteUser(user);
+    @PutMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Добавление друга: пользователь {}, друг {}", id, friendId);
+        userService.addFriend(id, friendId);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(ValidationException e) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    @DeleteMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Удаление друга: пользователь {}, друг {}", id, friendId);
+        userService.removeFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        log.info("Получение друзей пользователя: {}", id);
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        log.info("Получение общих друзей: пользователь {}, другой пользователь {}", id, otherId);
+        return userService.getCommonFriends(id, otherId);
     }
 }

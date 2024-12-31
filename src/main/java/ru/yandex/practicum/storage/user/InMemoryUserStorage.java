@@ -12,20 +12,19 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class InMemoryUserStorage {
+public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
+    private long nextId = 1;
 
+    @Override
     public User addUser(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        long newId = users.size() + 1;
-        user.setId(newId);
-        users.put(newId, user);
-        log.info("Пользователь создан: {}", user);
+        user.setId(nextId++);
+        users.put(user.getId(), user);
+        log.info("Пользователь добавлен: {}", user);
         return user;
     }
 
+    @Override
     public User updateUser(User user) {
         if (!users.containsKey(user.getId())) {
             throw new ValidationException("Пользователь с таким ID не найден.");
@@ -35,6 +34,7 @@ public class InMemoryUserStorage {
         return user;
     }
 
+    @Override
     public User deleteUser(User user) {
         if (!users.containsKey(user.getId())) {
             throw new ValidationException("Пользователь с таким ID не найден.");
@@ -44,7 +44,17 @@ public class InMemoryUserStorage {
         return user;
     }
 
+    @Override
     public Collection<User> getAllUsers() {
         return new ArrayList<>(users.values());
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        User user = users.get(id);
+        if (user == null) {
+            throw new ValidationException("Пользователь с таким ID не найден.");
+        }
+        return user;
     }
 }

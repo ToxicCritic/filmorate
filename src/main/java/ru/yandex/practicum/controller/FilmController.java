@@ -1,51 +1,58 @@
 package ru.yandex.practicum.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import ru.yandex.practicum.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.model.Film;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.storage.film.FilmStorage;
+import ru.yandex.practicum.model.Film;
+import ru.yandex.practicum.service.FilmService;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/films")
+@Slf4j
 public class FilmController {
-    private final FilmStorage filmStorage;
+    private final FilmService filmService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Film addFilm(@Valid @RequestBody Film film) {
-        return filmStorage.addFilm(film);
+    public Film addFilm(@RequestBody Film film) {
+        log.info("Добавление фильма: {}", film);
+        return filmService.addFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) {
-        return filmStorage.updateFilm(film);
+    public Film updateFilm(@RequestBody Film film) {
+        log.info("Обновление фильма: {}", film);
+        return filmService.updateFilm(film);
     }
 
     @GetMapping
     public Collection<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        log.info("Получение всех фильмов");
+        return filmService.getAllFilms();
     }
 
-    @DeleteMapping
-    public Film deleteFilm(Film film) {
-        return filmStorage.deleteFilm(film);
+    @PutMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void addLike(@PathVariable Long id, @PathVariable Long userId) {
+        log.info("Добавление лайка: фильм {}, пользователь {}", id, userId);
+        filmService.addLike(id, userId);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(ValidationException e) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    @DeleteMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeLike(@PathVariable Long id, @PathVariable Long userId) {
+        log.info("Удаление лайка: фильм {}, пользователь {}", id, userId);
+        filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Получение популярных фильмов (количество: {})", count);
+        return filmService.getPopularFilms(count);
     }
 }
-
-
