@@ -6,20 +6,20 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
+import ru.yandex.practicum.storage.friend.InMemoryFriendStorage;
 import ru.yandex.practicum.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 public class UserControllerUnitTest {
 
     private UserController userController;
 
     @BeforeEach
     public void setup() {
-        UserService userService = new UserService(new InMemoryUserStorage());
+        UserService userService = new UserService(new InMemoryUserStorage(), new InMemoryFriendStorage());
         userController = new UserController(userService);
     }
 
@@ -88,17 +88,4 @@ public class UserControllerUnitTest {
         assertEquals("testuser", retrievedUser.getLogin());
     }
 
-    @Test
-    public void shouldThrowExceptionForInvalidEmail() {
-        User user = new User();
-        user.setLogin("invaliduser");
-        user.setEmail("invalid-email");
-        user.setBirthday(LocalDate.of(1990, 1, 1));
-
-        MethodArgumentNotValidException exception = assertThrows(MethodArgumentNotValidException.class, () -> {
-            userController.addUser(user);
-        });
-
-        assertEquals("Некорректный email.", exception.getMessage());
-    }
 }

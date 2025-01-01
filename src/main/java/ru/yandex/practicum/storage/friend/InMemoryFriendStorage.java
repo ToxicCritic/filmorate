@@ -10,11 +10,13 @@ public class InMemoryFriendStorage implements FriendStorage {
 
     private final Map<Long, Set<Long>> friends = new HashMap<>(); // userId -> friendIds
 
+    @Override
     public void addFriend(long userId, long friendId) {
         friends.computeIfAbsent(userId, k -> new HashSet<>()).add(friendId);
         friends.computeIfAbsent(friendId, k -> new HashSet<>()).add(userId);
     }
 
+    @Override
     public void removeFriend(long userId, long friendId) {
         if (friends.containsKey(userId)) {
             friends.get(userId).remove(friendId);
@@ -30,6 +32,7 @@ public class InMemoryFriendStorage implements FriendStorage {
         }
     }
 
+    @Override
     public Set<Long> getFriends(long userId) {
         return friends.getOrDefault(userId, new HashSet<>());
     }

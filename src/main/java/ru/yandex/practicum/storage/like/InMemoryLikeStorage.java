@@ -12,10 +12,12 @@ public class InMemoryLikeStorage implements LikeStorage {
 
     private final Map<Long, Set<Long>> likes = new HashMap<>(); // filmId -> userIds
 
+    @Override
     public void addLike(long filmId, long userId) {
         likes.computeIfAbsent(filmId, k -> new HashSet<>()).add(userId);
     }
 
+    @Override
     public void removeLike(long filmId, long userId) {
         if (likes.containsKey(filmId)) {
             likes.get(filmId).remove(userId);
@@ -25,10 +27,12 @@ public class InMemoryLikeStorage implements LikeStorage {
         }
     }
 
+    @Override
     public Set<Long> getLikes(long filmId) {
         return likes.getOrDefault(filmId, new HashSet<>());
     }
 
+    @Override
     public int getLikeCount(long filmId) {
         return getLikes(filmId).size();
     }

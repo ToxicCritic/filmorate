@@ -2,25 +2,25 @@ package ru.yandex.practicum.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.service.FilmService;
 import ru.yandex.practicum.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.storage.like.InMemoryLikeStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 public class FilmControllerUnitTest {
 
-    private final FilmController filmController;
-
+    private FilmController filmController;
 
     @BeforeEach
     public void setup() {
-        FilmService filmService = new FilmService(new InMemoryFilmStorage());
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
+        InMemoryLikeStorage likeStorage = new InMemoryLikeStorage(); // Новое хранилище лайков
+        FilmService filmService = new FilmService(filmStorage, likeStorage);
         filmController = new FilmController(filmService);
     }
 
