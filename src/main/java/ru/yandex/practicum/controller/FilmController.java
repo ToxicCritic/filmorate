@@ -10,7 +10,6 @@ import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.service.FilmService;
 
 import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController

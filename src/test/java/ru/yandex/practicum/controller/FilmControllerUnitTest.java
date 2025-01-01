@@ -2,6 +2,7 @@ package ru.yandex.practicum.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.service.FilmService;
@@ -11,9 +12,11 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class FilmControllerUnitTest {
 
-    private FilmController filmController;
+    private final FilmController filmController;
+
 
     @BeforeEach
     public void setup() {

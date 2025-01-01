@@ -2,7 +2,6 @@ package ru.yandex.practicum.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +10,7 @@ import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
 
 import java.util.Collection;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> getFriends(@PathVariable Long id) {
+    public Set<Long> getFriends(@PathVariable Long id) {
         log.info("Получение друзей пользователя: {}", id);
         return userService.getFriends(id);
     }

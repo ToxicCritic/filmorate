@@ -2,8 +2,8 @@ package ru.yandex.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
+import ru.yandex.practicum.storage.friend.FriendStorage;
 import ru.yandex.practicum.storage.user.UserStorage;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserStorage userStorage;
-    private final Map<Long, Set<Long>> friendships = new HashMap<>();
+    private final FriendStorage friendStorage;
 
     public User addUser(User user) {
         validateUser(user);
@@ -37,29 +37,21 @@ public class UserService {
         return userStorage.getUserById(id);
     }
 
-    public void addFriend(Long userId, Long friendId) {
-        friendships.computeIfAbsent(userId, k -> new HashSet<>()).add(friendId);
-        friendships.computeIfAbsent(friendId, k -> new HashSet<>()).add(userId);
+    public void addFriend(long userId, long friendId) {
+        friendStorage.addFriend(userId, friendId);
     }
 
-    public void removeFriend(Long userId, Long friendId) {
-        if (friendships.containsKey(userId)) {
-            friendships.get(userId).remove(friendId);
-        }
-        if (friendships.containsKey(friendId)) {
-            friendships.get(friendId).remove(userId);
-        }
+    public void removeFriend(long userId, long friendId) {
+        friendStorage.removeFriend(userId, friendId);
     }
 
-    public Collection<User> getFriends(Long userId) {
-        return friendships.getOrDefault(userId, Collections.emptySet()).stream()
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
+    public Set<Long> getFriends(long userId) {
+        return friendStorage.getFriends(userId);
     }
 
     public Collection<User> getCommonFriends(Long userId, Long otherId) {
-        Set<Long> userFriends = friendships.getOrDefault(userId, Collections.emptySet());
-        Set<Long> otherFriends = friendships.getOrDefault(otherId, Collections.emptySet());
+        Set<Long> userFriends = friendStorage.getFriends(userId);
+        Set<Long> otherFriends = friendStorage.getFriends(otherId);
 
         return userFriends.stream()
                 .filter(otherFriends::contains)
