@@ -4,6 +4,7 @@ import lombok.Data;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -24,4 +25,10 @@ public class Film {
     private int duration;
 
     private Set<Long> likes = new HashSet<>();
+
+    @NotEmpty(message = "Фильму должен быть присвоен хотя бы один жанр")
+    private List<String> genres;
+
+    @NotNull(message = "Рейтинг MPA не может быть пустым")
+    private MpaRating mpaRating;
 }
