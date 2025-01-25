@@ -1,0 +1,4 @@
+2025-01-25 20:24:14.020133+03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "MPA_RATINGS" не найдена
+Table "MPA_RATINGS" not found; SQL statement:
+CREATE TABLE IF NOT EXISTS films ( id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name VARCHAR(255) NOT NULL, description VARCHAR(200), release_date DATE NOT NULL, duration INTEGER NOT NULL CHECK (duration > 0), mpa_rating_id INT NOT NULL, FOREIGN KEY (mpa_rating_id) REFERENCES mpa_ratings (id) ) [42102-224]
