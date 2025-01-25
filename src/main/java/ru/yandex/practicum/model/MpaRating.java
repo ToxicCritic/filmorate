@@ -5,5 +5,9 @@ public enum MpaRating {
     PG,
     PG_13,
     R,
-    NC_17
+    NC_17;
+
+    public static MpaRating fromId(int id) {
+        return values()[id - 1];
+    }
 }
