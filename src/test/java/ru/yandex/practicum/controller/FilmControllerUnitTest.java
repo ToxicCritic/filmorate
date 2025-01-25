@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.service.FilmService;
-import ru.yandex.practicum.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.storage.like.InMemoryLikeStorage;
+import ru.yandex.practicum.storage.film.FilmDbStorage;
+import ru.yandex.practicum.storage.like.LikeDbStorage;
 
 import java.time.LocalDate;
 
@@ -18,8 +18,8 @@ public class FilmControllerUnitTest {
 
     @BeforeEach
     public void setup() {
-        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
-        InMemoryLikeStorage likeStorage = new InMemoryLikeStorage(); // Новое хранилище лайков
+        FilmDbStorage filmStorage = new FilmDbStorage();
+        LikeDbStorage likeStorage = new LikeDbStorage(); // Новое хранилище лайков
         FilmService filmService = new FilmService(filmStorage, likeStorage);
         filmController = new FilmController(filmService);
     }

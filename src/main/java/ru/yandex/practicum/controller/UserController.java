@@ -1,79 +1,67 @@
 package ru.yandex.practicum.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
-@Slf4j
-@Validated
 public class UserController {
     private final UserService userService;
 
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public User addUser(@RequestBody @Valid User user) {
-        log.info("Создание пользователя: {}", user);
-        return userService.addUser(user);
+    public User createUser(@Valid @RequestBody User user) {
+        return userService.save(user);
     }
 
     @PutMapping
-    public User updateUser(@RequestBody @Valid User user) {
-        log.info("Обновление пользователя: {}", user);
-        return userService.updateUser(user);
-    }
-
-    @DeleteMapping
-    public User deleteUser(@RequestBody User user) {
-        log.info("Удаление пользователя: {}", user);
-        return userService.deleteUser(user);
+    public User updateUser(@Valid @RequestBody User user) {
+        return userService.update(user);
     }
 
     @GetMapping
-    public Collection<User> getAllUsers() {
-        log.info("Получение всех пользователей");
-        return userService.getAllUsers();
+    public List<User> getAllUsers() {
+        return userService.findAll();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(Long id) {
-        log.info("Получение пользователя по ID: {}", id);
-        return userService.getUserById(id);
+    public User getUserById(@PathVariable Long id) {
+        return userService.findById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        log.info("Добавление друга: пользователь {}, друг {}", id, friendId);
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        log.info("Удаление друга: пользователь {}, друг {}", id, friendId);
+    public void removeFriend(@PathVariable long id, @PathVariable long friendId) {
         userService.removeFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public Set<Long> getFriends(@PathVariable Long id) {
-        log.info("Получение друзей пользователя: {}", id);
+    public Set<Long> getFriends(@PathVariable long id) {
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
-        log.info("Получение общих друзей: пользователь {}, другой пользователь {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
 }

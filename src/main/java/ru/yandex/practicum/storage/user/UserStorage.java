@@ -1,17 +1,13 @@
 package ru.yandex.practicum.storage.user;
 
 import ru.yandex.practicum.model.User;
-
-import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public interface UserStorage {
-    public User addUser(User user);
-
-    public User updateUser(User user);
-
-    public User deleteUser(User user);
-
-    public Collection<User> getAllUsers();
-
-    public User getUserById(Long id);
+    User save(User user);
+    User update(User user);
+    Optional<User> findById(Long id);
+    List<User> findAll();
+    void deleteById(Long id);
 }

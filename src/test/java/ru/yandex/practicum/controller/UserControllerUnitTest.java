@@ -2,12 +2,10 @@ package ru.yandex.practicum.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
-import ru.yandex.practicum.storage.friend.InMemoryFriendStorage;
-import ru.yandex.practicum.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.storage.friend.FriendDbStorage;
 
 import java.time.LocalDate;
 
@@ -19,7 +17,7 @@ public class UserControllerUnitTest {
 
     @BeforeEach
     public void setup() {
-        UserService userService = new UserService(new InMemoryUserStorage(), new InMemoryFriendStorage());
+        UserService userService = new UserService(new InMemoryUserStorage(), new FriendDbStorage());
         userController = new UserController(userService);
     }
 
