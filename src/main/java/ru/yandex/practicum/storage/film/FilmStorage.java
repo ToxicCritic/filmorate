@@ -12,7 +12,7 @@ public interface FilmStorage {
 
     List<Film> findAll();
 
-    Optional<Film> findById(Long id);
+    Optional<Film> findById(Integer id);
 
-    void delete(Long id);
+    void delete(Integer id);
 }

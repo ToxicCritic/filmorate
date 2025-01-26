@@ -1,60 +1,101 @@
 package ru.yandex.practicum.controller;
 
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.dto.FilmDto;
+import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.service.FilmService;
+import ru.yandex.practicum.storage.mapper.FilmMapper;
 
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
+@Validated
+@RequiredArgsConstructor
+@Slf4j
 public class FilmController {
-
     private final FilmService filmService;
-
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
+    private final FilmMapper filmMapper;
 
     @PostMapping
-    public ResponseEntity<Film> createFilm(@RequestBody Film film) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public FilmDto createFilm(@Valid @RequestBody FilmDto filmDto) {
+        log.info("Получен запрос на создание фильма: {}", filmDto);
+
+        if (filmDto.getMpaRatingId() == null) {
+            log.error("Поле mpaRatingId отсутствует или равно null.");
+        } else {
+            log.info("Получен mpaRatingId: {}", filmDto.getMpaRatingId());
+        }
+
+        Film film = filmMapper.toFilm(filmDto);
         Film createdFilm = filmService.createFilm(film);
-        return ResponseEntity.ok(createdFilm);
+        log.info("Фильм успешно создан: {}", createdFilm);
+        return filmMapper.toFilmDto(createdFilm);
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
+    @ResponseStatus(HttpStatus.OK)
+    public FilmDto updateFilm(@Valid @RequestBody FilmDto filmDto) {
+        log.info("Получен запрос на обновление фильма: {}", filmDto);
+        Film film = filmMapper.toFilm(filmDto);
         Film updatedFilm = filmService.updateFilm(film);
-        return ResponseEntity.ok(updatedFilm);
+        log.info("Фильм успешно обновлён: {}", updatedFilm);
+        return filmMapper.toFilmDto(updatedFilm);
     }
 
+
     @GetMapping
-    public ResponseEntity<List<Film>> getAllFilms() {
-        return ResponseEntity.ok(filmService.getAllFilms());
+    @ResponseStatus(HttpStatus.OK)
+    public List<FilmDto> getAllFilms() {
+        log.info("Получение всех фильмов.");
+        List<Film> films = filmService.getAllFilms();
+        return films.stream()
+                .map(filmMapper::toFilmDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
-        Optional<Film> film = filmService.getFilmById(id);
-        return film.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @ResponseStatus(HttpStatus.OK)
+    public FilmDto getFilmById(@PathVariable Integer id) {
+        log.info("Получение фильма с ID: {}", id);
+        Film film = filmService.getFilmById(id)
+                .orElseThrow(() -> {
+                    String message = "Фильм с ID " + id + " не найден.";
+                    log.error(message);
+                    return new NotFoundException(message);
+                });
+        return filmMapper.toFilmDto(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> likeFilm(@PathVariable Long id, @PathVariable Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public void likeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+        log.info("Добавление лайка фильму с ID: {} от пользователя с ID: {}", id, userId);
         filmService.addLike(id, userId);
-        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Void> unlikeFilm(@PathVariable Long id, @PathVariable Long userId) {
+    @ResponseStatus(HttpStatus.OK)
+    public void unlikeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+        log.info("Удаление лайка фильму с ID: {} от пользователя с ID: {}", id, userId);
         filmService.removeLike(id, userId);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<List<Film>> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        return ResponseEntity.ok(filmService.getPopularFilms(count));
+    @ResponseStatus(HttpStatus.OK)
+    public List<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Получение {} популярных фильмов.", count);
+        List<Film> popularFilms = filmService.getPopularFilms(count);
+        return popularFilms.stream()
+                .map(filmMapper::toFilmDto)
+                .collect(Collectors.toList());
     }
 }

@@ -1,18 +1,19 @@
 package ru.yandex.practicum.storage.mpa;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.model.MpaRating;
 import ru.yandex.practicum.storage.mapper.MpaRowMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class MpaDbStorage implements MpaStorage {
+
+    private static final Logger logger = LoggerFactory.getLogger(MpaDbStorage.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -22,13 +23,21 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public List<MpaRating> findAll() {
-        String sql = "SELECT * FROM mpa_ratings";
+        String sql = "SELECT id, name, description FROM mpa_ratings";
+        logger.info("Выполнение запроса для получения всех MPA рейтингов");
         return jdbcTemplate.query(sql, new MpaRowMapper());
     }
 
     @Override
-    public Optional<MpaRating> findById(Long id) {
+    public Optional<MpaRating> findById(Integer id) {
+        logger.info("Поиск MPA рейтинга с ID: {}", id);
         String sql = "SELECT * FROM mpa_ratings WHERE id = ?";
-        return jdbcTemplate.query(sql, new MpaRowMapper(), id).stream().findFirst();
+        try {
+            MpaRating mpaRating = jdbcTemplate.queryForObject(sql, new MpaRowMapper(), id);
+            return Optional.ofNullable(mpaRating);
+        } catch (Exception e) {
+            logger.warn("MPA рейтинг с ID {} не найден.", id);
+            return Optional.empty();
+        }
     }
 }
