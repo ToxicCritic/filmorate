@@ -58,10 +58,8 @@ public class FilmDbStorage implements FilmStorage {
             throw new RuntimeException("Не удалось получить сгенерированный ID для фильма.");
         }
 
-        // Сохранение жанров
         saveGenres(film);
 
-        // Установка полного объекта MPA рейтинга
         MpaRating mpa = mpaStorage.findById(film.getMpaRating().getId())
                 .orElseThrow(() -> {
                     String message = "MPA рейтинг с ID " + film.getMpaRating().getId() + " не найден.";
@@ -71,7 +69,6 @@ public class FilmDbStorage implements FilmStorage {
         film.setMpaRating(mpa);
         logger.info("MPA Rating установлен: {}", mpa);
 
-        // Установка жанров
         Set<Genre> genres = genreStorage.findByFilmId(film.getId());
         film.setGenres(genres);
         logger.info("Жанры установлены: {}", genres);
@@ -101,7 +98,6 @@ public class FilmDbStorage implements FilmStorage {
         deleteGenres(film.getId());
         saveGenres(film);
 
-        // Установка полного объекта MPA рейтинга
         MpaRating mpa = mpaStorage.findById(film.getMpaRating().getId())
                 .orElseThrow(() -> {
                     String message = "MPA рейтинг с ID " + film.getMpaRating().getId() + " не найден.";
@@ -111,7 +107,6 @@ public class FilmDbStorage implements FilmStorage {
         film.setMpaRating(mpa);
         logger.info("MPA Rating установлен: {}", mpa);
 
-        // Установка жанров
         Set<Genre> genres = genreStorage.findByFilmId(film.getId());
         film.setGenres(genres);
         logger.info("Жанры установлены: {}", genres);
@@ -138,7 +133,6 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "SELECT * FROM films";
         List<Film> films = jdbcTemplate.query(sql, new FilmRowMapper());
 
-        // Установка MPA рейтингов и жанров для каждого фильма
         films.forEach(film -> {
             MpaRating mpa = mpaStorage.findById(film.getMpaRating().getId())
                     .orElseThrow(() -> {

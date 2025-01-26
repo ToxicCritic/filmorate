@@ -31,23 +31,23 @@ public class UserService {
         return userStorage.findAll();
     }
 
-    public Optional<User> getUserById(Long id) {
+    public Optional<User> getUserById(Integer id) {
         return userStorage.findById(id);
     }
 
-    public void addFriend(Long userId, Long friendId) {
+    public void addFriend(Integer userId, Integer friendId) {
         friendStorage.addFriend(userId, friendId);
     }
 
-    public void removeFriend(Long userId, Long friendId) {
+    public void removeFriend(Integer userId, Integer friendId) {
         friendStorage.removeFriend(userId, friendId);
     }
 
-    public List<User> getFriends(Long userId) {
+    public List<User> getFriends(Integer userId) {
         return friendStorage.getFriends(userId);
     }
 
-    public List<User> getCommonFriends(Long userId, Long otherId) {
+    public List<User> getCommonFriends(Integer userId, Integer otherId) {
         return friendStorage.getCommonFriends(userId, otherId);
     }
 }

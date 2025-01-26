@@ -31,6 +31,9 @@ public class UserController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public User updateUser(@Valid @RequestBody User user) {
+        if (userService.getUserById(user.getId()).isEmpty()) {
+            throw new NotFoundException("Other user not found");
+        }
         return userService.updateUser(user);
     }
 
@@ -42,32 +45,46 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User getUserById(@PathVariable Long id) {
+    public User getUserById(@PathVariable Integer id) {
         return userService.getUserById(id)
-                .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found."));
+                .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public void addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        if (userService.getUserById(friendId).isEmpty()) {
+            throw new NotFoundException("Friend not found");
+        }
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public void removeFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        if (userService.getUserById(id).isEmpty()) {
+            throw  new NotFoundException("User with ID " + id + " not found");
+        } else if (userService.getUserById(friendId).isEmpty()) {
+            throw new NotFoundException("Friend with ID " + friendId + " not found");
+        }
         userService.removeFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getFriends(@PathVariable Long id) {
+    public List<User> getFriends(@PathVariable Integer id) {
+        if (userService.getUserById(id).isEmpty()) {
+            throw new NotFoundException("User not found");
+        }
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+    public List<User> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
+        if (userService.getUserById(otherId).isEmpty()) {
+            throw new NotFoundException("Other user not found");
+        }
         return userService.getCommonFriends(id, otherId);
     }
 }

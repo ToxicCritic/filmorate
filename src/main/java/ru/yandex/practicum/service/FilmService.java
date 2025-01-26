@@ -51,7 +51,6 @@ public class FilmService {
     @Transactional
     public void addLike(Integer filmId, Integer userId) {
         logger.info("Добавление лайка фильму с ID: {} от пользователя с ID: {}", filmId, userId);
-        // Проверка существования фильма
         filmStorage.findById(filmId)
                 .orElseThrow(() -> new NotFoundException("Фильм с ID " + filmId + " не найден."));
         likeStorage.addLike(filmId, userId);
@@ -61,7 +60,6 @@ public class FilmService {
     @Transactional
     public void removeLike(Integer filmId, Integer userId) {
         logger.info("Удаление лайка фильму с ID: {} от пользователя с ID: {}", filmId, userId);
-        // Проверка существования фильма
         filmStorage.findById(filmId)
                 .orElseThrow(() -> new NotFoundException("Фильм с ID " + filmId + " не найден."));
         likeStorage.removeLike(filmId, userId);

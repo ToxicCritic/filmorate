@@ -12,15 +12,15 @@ public interface UserStorage {
 
     List<User> findAll();
 
-    Optional<User> findById(Long id);
+    Optional<User> findById(Integer id);
 
-    void delete(Long id);
+    void delete(Integer id);
 
-    void addFriend(Long userId, Long friendId);
+    void addFriend(Integer userId, Integer friendId);
 
-    void removeFriend(Long userId, Long friendId);
+    void removeFriend(Integer userId, Integer friendId);
 
-    List<User> getFriends(Long userId);
+    List<User> getFriends(Integer userId);
 
-    List<User> getCommonFriends(Long userId, Long otherId);
+    List<User> getCommonFriends(Integer userId, Integer otherId);
 }

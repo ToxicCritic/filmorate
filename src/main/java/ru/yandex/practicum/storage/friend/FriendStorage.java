@@ -5,11 +5,11 @@ import ru.yandex.practicum.model.User;
 import java.util.List;
 
 public interface FriendStorage {
-    void addFriend(Long userId, Long friendId);
+    void addFriend(Integer userId, Integer friendId);
 
-    void removeFriend(Long userId, Long friendId);
+    void removeFriend(Integer userId, Integer friendId);
 
-    List<User> getFriends(Long userId);
+    List<User> getFriends(Integer userId);
 
-    List<User> getCommonFriends(Long userId, Long otherId);
+    List<User> getCommonFriends(Integer userId, Integer otherId);
 }
