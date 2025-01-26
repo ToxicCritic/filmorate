@@ -1,9 +1,11 @@
 package ru.yandex.practicum.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.storage.user.UserDbStorage;
 
@@ -11,8 +13,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Sql(scripts = {"classpath:schema.sql", "classpath:data.sql"})
+@JdbcTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Import({UserDbStorage.class})
 public class UserControllerTest {
 
     @Autowired
@@ -76,7 +80,7 @@ public class UserControllerTest {
 
     @Test
     public void testDeleteUser() {
-        userStorage.deleteById(1L);
+        userStorage.delete(1L);
 
         Optional<User> deletedUser = userStorage.findById(1L);
 

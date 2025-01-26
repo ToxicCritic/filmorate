@@ -1,11 +1,15 @@
 package ru.yandex.practicum.storage.friend;
 
-import java.util.Set;
+import ru.yandex.practicum.model.User;
+
+import java.util.List;
 
 public interface FriendStorage {
-    void addFriend(long userId, long friendId);
+    void addFriend(Long userId, Long friendId);
 
-    void removeFriend(long userId, long friendId);
+    void removeFriend(Long userId, Long friendId);
 
-    Set<Long> getFriends(long userId);
+    List<User> getFriends(Long userId);
+
+    List<User> getCommonFriends(Long userId, Long otherId);
 }

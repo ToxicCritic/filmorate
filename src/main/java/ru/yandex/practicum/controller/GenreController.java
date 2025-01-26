@@ -1,29 +1,31 @@
 package ru.yandex.practicum.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.Genre;
-import ru.yandex.practicum.storage.genre.GenreStorage;
+import ru.yandex.practicum.service.GenreService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/genres")
 public class GenreController {
-    private final GenreStorage genreStorage;
 
-    @Autowired
-    public GenreController(GenreStorage genreStorage) {
-        this.genreStorage = genreStorage;
+    private final GenreService genreService;
+
+    public GenreController(GenreService genreService) {
+        this.genreService = genreService;
     }
 
     @GetMapping
-    public List<Genre> getAllGenres() {
-        return genreStorage.findAll();
+    public ResponseEntity<List<Genre>> getAllGenres() {
+        return ResponseEntity.ok(genreService.getAllGenres());
     }
 
     @GetMapping("/{id}")
-    public Genre getGenreById(@PathVariable int id) {
-        return genreStorage.findById(id).orElseThrow(() -> new IllegalArgumentException("Genre not found"));
+    public ResponseEntity<Genre> getGenreById(@PathVariable Long id) {
+        Optional<Genre> genre = genreService.getGenreById(id);
+        return genre.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

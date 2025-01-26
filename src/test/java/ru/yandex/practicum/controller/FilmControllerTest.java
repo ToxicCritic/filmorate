@@ -1,9 +1,11 @@
 package ru.yandex.practicum.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.storage.film.FilmDbStorage;
 
@@ -12,8 +14,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Sql(scripts = {"classpath:schema.sql", "classpath:data.sql"})
+@JdbcTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Import({FilmDbStorage.class})
 public class FilmControllerTest {
 
     @Autowired
@@ -31,7 +35,7 @@ public class FilmControllerTest {
                                 .hasFieldOrPropertyWithValue("description", "A mind-bending thriller")
                                 .hasFieldOrPropertyWithValue("releaseDate", LocalDate.of(2010, 7, 16))
                                 .hasFieldOrPropertyWithValue("duration", 148)
-                                .hasFieldOrPropertyWithValue("mpaRating", ru.yandex.practicum.model.MpaRating.PG_13)
+                                .hasFieldOrPropertyWithValue("mpaRatingId", 3)
                 );
     }
 
@@ -42,7 +46,7 @@ public class FilmControllerTest {
         newFilm.setDescription("A journey through space and time");
         newFilm.setReleaseDate(LocalDate.of(2014, 11, 7));
         newFilm.setDuration(169);
-        newFilm.setMpaRating(ru.yandex.practicum.model.MpaRating.PG_13);
+        newFilm.setMpaRatingId(2);
 
         Film savedFilm = filmStorage.save(newFilm);
 
@@ -58,7 +62,7 @@ public class FilmControllerTest {
                                 .hasFieldOrPropertyWithValue("description", "A journey through space and time")
                                 .hasFieldOrPropertyWithValue("releaseDate", LocalDate.of(2014, 11, 7))
                                 .hasFieldOrPropertyWithValue("duration", 169)
-                                .hasFieldOrPropertyWithValue("mpaRating", ru.yandex.practicum.model.MpaRating.PG_13)
+                                .hasFieldOrPropertyWithValue("mpaRatingId", 2)
                 );
     }
 
@@ -80,7 +84,7 @@ public class FilmControllerTest {
 
     @Test
     public void testDeleteFilm() {
-        filmStorage.deleteById(1L);
+        filmStorage.delete(1L);
 
         Optional<Film> deletedFilm = filmStorage.findById(1L);
 

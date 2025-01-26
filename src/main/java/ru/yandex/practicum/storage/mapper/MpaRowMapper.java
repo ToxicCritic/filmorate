@@ -9,7 +9,10 @@ import java.sql.SQLException;
 public class MpaRowMapper implements RowMapper<MpaRating> {
     @Override
     public MpaRating mapRow(ResultSet rs, int rowNum) throws SQLException {
-        int id = rs.getInt("id");
-        return MpaRating.values()[id - 1];
+        MpaRating mpaRating = new MpaRating();
+        mpaRating.setId(rs.getInt("id"));
+        mpaRating.setName(rs.getString("name"));
+        mpaRating.setDescription(rs.getString("description"));
+        return mpaRating;
     }
 }
