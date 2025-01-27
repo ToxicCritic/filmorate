@@ -29,11 +29,7 @@ public class FilmController {
     public FilmDto createFilm(@Valid @RequestBody FilmDto filmDto) {
         log.info("Получен запрос на создание фильма: {}", filmDto);
 
-        if (filmDto.getMpaRatingId() == null) {
-            log.error("Поле mpaRatingId отсутствует или равно null.");
-        } else {
-            log.info("Получен mpaRatingId: {}", filmDto.getMpaRatingId());
-        }
+        log.info("Получен mpaRatingId: {}", filmDto.getMpaRatingId());
 
         Film film = filmMapper.toFilm(filmDto);
         Film createdFilm = filmService.createFilm(film);
