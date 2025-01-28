@@ -1,16 +1,13 @@
 package ru.yandex.practicum.storage.like;
 
-import org.springframework.stereotype.Component;
+import ru.yandex.practicum.model.Film;
 
-import java.util.Set;
+import java.util.List;
 
-@Component
 public interface LikeStorage {
-    public void addLike(long filmId, long userId);
+    void addLike(Integer filmId, Integer userId);
 
-    public Set<Long> getLikes(long filmId);
+    void removeLike(Integer filmId, Integer userId);
 
-    public void removeLike(long filmId, long userId);
-
-    public int getLikeCount(long filmId);
+    List<Film> getPopularFilms(int count);
 }

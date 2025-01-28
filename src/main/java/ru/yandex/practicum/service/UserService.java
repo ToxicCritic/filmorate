@@ -1,67 +1,53 @@
 package ru.yandex.practicum.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.storage.friend.FriendStorage;
 import ru.yandex.practicum.storage.user.UserStorage;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
 public class UserService {
+
     private final UserStorage userStorage;
     private final FriendStorage friendStorage;
 
-    public User addUser(User user) {
-        validateUser(user);
-        return userStorage.addUser(user);
+    public UserService(UserStorage userStorage, FriendStorage friendStorage) {
+        this.userStorage = userStorage;
+        this.friendStorage = friendStorage;
+    }
+
+    public User createUser(User user) {
+        return userStorage.save(user);
     }
 
     public User updateUser(User user) {
-        validateUser(user);
-        return userStorage.updateUser(user);
+        return userStorage.update(user);
     }
 
-    public User deleteUser(User user) {
-        return userStorage.deleteUser(user);
+    public List<User> getAllUsers() {
+        return userStorage.findAll();
     }
 
-    public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public Optional<User> getUserById(Integer id) {
+        return userStorage.findById(id);
     }
 
-    public User getUserById(Long id) {
-        return userStorage.getUserById(id);
-    }
-
-    public void addFriend(long userId, long friendId) {
+    public void addFriend(Integer userId, Integer friendId) {
         friendStorage.addFriend(userId, friendId);
     }
 
-    public void removeFriend(long userId, long friendId) {
+    public void removeFriend(Integer userId, Integer friendId) {
         friendStorage.removeFriend(userId, friendId);
     }
 
-    public Set<Long> getFriends(long userId) {
+    public List<User> getFriends(Integer userId) {
         return friendStorage.getFriends(userId);
     }
 
-    public Collection<User> getCommonFriends(Long userId, Long otherId) {
-        Set<Long> userFriends = friendStorage.getFriends(userId);
-        Set<Long> otherFriends = friendStorage.getFriends(otherId);
-
-        return userFriends.stream()
-                .filter(otherFriends::contains)
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
-    }
-
-    private void validateUser(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+    public List<User> getCommonFriends(Integer userId, Integer otherId) {
+        return friendStorage.getCommonFriends(userId, otherId);
     }
 }

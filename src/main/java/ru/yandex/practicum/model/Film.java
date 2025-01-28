@@ -1,15 +1,19 @@
 package ru.yandex.practicum.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.validation.constraints.*;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Film {
-    private Long id;
+    private Integer id;
 
     @NotBlank(message = "Название не может быть пустым")
     private String name;
@@ -24,11 +28,10 @@ public class Film {
     @Positive(message = "Продолжительность должна быть положительным числом")
     private int duration;
 
-    private Set<Long> likes = new HashSet<>();
+    @NotNull(message = "Рейтинг MPA не может быть пустой.")
+    private MpaRating mpaRating;
 
     @NotEmpty(message = "Фильму должен быть присвоен хотя бы один жанр")
-    private List<String> genres;
-
-    @NotNull(message = "Рейтинг MPA не может быть пустым")
-    private MpaRating mpaRating;
+    private Set<Genre> genres;
 }
+

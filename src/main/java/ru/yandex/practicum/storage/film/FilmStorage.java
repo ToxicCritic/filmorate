@@ -2,16 +2,17 @@ package ru.yandex.practicum.storage.film;
 
 import ru.yandex.practicum.model.Film;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public interface FilmStorage {
-    public Film addFilm(Film film);
+    Film save(Film film);
 
-    public Film updateFilm(Film film);
+    Film update(Film film);
 
-    public Collection<Film> getAllFilms();
+    List<Film> findAll();
 
-    public Film deleteFilm(Film film);
+    Optional<Film> findById(Integer id);
 
-    public Film getFilmById(Long id);
+    void delete(Integer id);
 }

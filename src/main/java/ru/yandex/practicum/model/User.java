@@ -1,18 +1,17 @@
 package ru.yandex.practicum.model;
 
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import jakarta.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Data
 public class User {
-    private Long id;
+    private Integer id;
 
-    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", message = "Неверный формат электронной почты")
+    @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            message = "Неверный формат электронной почты")
     @NotBlank(message = "Электронная почта не может быть пустой")
     private String email;
 
@@ -21,11 +20,10 @@ public class User {
 
     private String name;
 
+    @NotNull(message = "Дата рождения не может быть пустой")
     @Past(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
 
-    private Set<Long> friends = new HashSet<>();
-
-    private Map<Long, FriendshipStatus> friendshipStatus;
-
+    private Set<User> friends;
 }
+

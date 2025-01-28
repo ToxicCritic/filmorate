@@ -8,13 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MpaRating {
+public class Genre {
     private Integer id;
-    @NotBlank(message = "Название MPA рейтинга не может быть пустым.")
+    @NotBlank(message = "Название жанра не может быть пустым.")
     private String name;
-    private String description;
-
-    public MpaRating(int id) {
-        this.id = id;
-    }
 }

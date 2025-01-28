@@ -1,14 +1,15 @@
 package ru.yandex.practicum.storage.friend;
 
-import org.springframework.stereotype.Component;
+import ru.yandex.practicum.model.User;
 
-import java.util.Set;
+import java.util.List;
 
-@Component
 public interface FriendStorage {
-    public void addFriend(long userId, long friendId);
+    void addFriend(Integer userId, Integer friendId);
 
-    public void removeFriend(long userId, long friendId);
+    void removeFriend(Integer userId, Integer friendId);
 
-    public Set<Long> getFriends(long userId);
+    List<User> getFriends(Integer userId);
+
+    List<User> getCommonFriends(Integer userId, Integer otherId);
 }
